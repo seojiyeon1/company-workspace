@@ -10,6 +10,7 @@ import Services from "./Page/Services/Services";
 import Contact from "./Page/Contact/contact"; // 소문자임. 주의
 
 import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
+import AdminLogin from './Page/Admin/AdminLogin';
 
 function Layout() {
   return (
@@ -51,8 +52,12 @@ const router = createBrowserRouter([
         element: <Services />
       }
     ]
-  }
-])
+  },
+  {
+    path: "/admin",
+    element: <AdminLogin />,
+  },
+]);
 
 function App() {
 
