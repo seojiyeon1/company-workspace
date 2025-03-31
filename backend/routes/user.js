@@ -170,7 +170,7 @@ router.post("/verify-token", (req, res) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    return res.status(200).json({ isVlid: true, user: decoded });
+    return res.status(200).json({ isValid: true, user: decoded });
   } catch (error) {
     return res
       .status(401)
