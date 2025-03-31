@@ -60,6 +60,7 @@
 <details><summary>관리자 페이지에서 로그아웃을 하면 <b>토큰 인증 실패</b> 에러 발생</summary>
   
 *authredirectedroute에서 로그아웃 이후에 쿠키에 토큰이 삭제되고 로그인 페이지로 리다이렉트되면서 발생한 에러*
+<br><br>
 *관리자 토큰을 검증하는 post endpoint 요청을 백엔드로 보내고 나서 토큰 검증이 완료되었을 때 정상적으로 접근이 가능하도록 하는 함수 ProtectedRoute 작성하여 해결*
   
 </details>
