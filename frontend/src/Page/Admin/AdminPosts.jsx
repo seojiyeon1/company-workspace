@@ -32,13 +32,14 @@ const AdminPosts = () => {
   };
 
   const filteredPosts = useMemo(() => {
-    return posts.filter(post => {
+    return posts.filter((post) => {
       const value = post[searchType].toLowerCase() || "";
       return value.includes(searchTerm.toLowerCase());
     });
   }, [posts, searchTerm, searchType]);
 
-  const totalPages = Math.ceil(filteredPosts.length / pageSize);
+  const totalPages = pageSize > 0 ? Math.ceil(filteredPosts.length / pageSize) : 1;
+
   const paginatedPosts = useMemo(() => {
     const start = (currentPage - 1) * pageSize;
     return filteredPosts.slice(start, start + pageSize);
@@ -79,7 +80,7 @@ const AdminPosts = () => {
       </div>
 
       <div className="mb-4 justify-between items-center">
-        <div className="text-lg font-bold text-gray-600">총 0개의 게시물</div>
+        <div className="text-lg font-bold text-gray-600">총 {paginatedPosts.length}개의 게시물</div>
 
         <div className="flex items-center space-x-2">
           <label className="text-base font-bold text-gray-600">
@@ -101,17 +102,17 @@ const AdminPosts = () => {
       </div>
 
       <div className="hidden md:block overflow-x-auto">
-        <table className="w-full bg-white shadow-ml rounded-lg overflow-hidden text-sm lg:text-lg font-bold">
+        <table className="w-full bg-white shadow-ml rounded-lg overflow-hidden text-sm lg:text-base font-bold">
           <thead className="bg-gray-100">
             <tr>
-              <th className="px-4 py-3 text-left">번호</th>
-              <th className="px-4 py-3 text-left">제목</th>
-              <th className="px-4 py-3 text-left">내용</th>
-              <th className="px-4 py-3 text-left">조회수</th>
-              <th className="px-4 py-3 text-center">파일</th>
-              <th className="px-4 py-3 text-left">작성일</th>
-              <th className="px-4 py-3 text-left">수정일</th>
-              <th className="px-4 py-3 text-center">관리</th>
+              <th className="px-4 py-3 text-left w-[8%]">번호</th>
+              <th className="px-4 py-3 text-left w-[15%]">제목</th>
+              <th className="px-4 py-3 text-left w-[30%]">내용</th>
+              <th className="px-4 py-3 text-left w-[7%]">조회수</th>
+              <th className="px-4 py-3 text-left w-[10%]">파일</th>
+              <th className="px-4 py-3 text-left w-[12%]">작성일</th>
+              <th className="px-4 py-3 text-left w-[12%]">수정일</th>
+              <th className="px-4 py-3 text-left w-[6%]">관리</th>
             </tr>
           </thead>
 
@@ -211,10 +212,10 @@ const AdminPosts = () => {
 
                   <td className="px-4 py-3">
                     <div className="flex justify-end space-x-2">
-                      <button className="px-3 py-1.5 bg-blue-500 text-white rounded hover:bg-blue-600">
+                      <button className="px-3 py-1.5 bg-blue-500 text-white rounded hover:bg-blue-600 whitespace-nowrap writing-normal">
                         수정
                       </button>
-                      <button className="px-3 py-1.5 bg-red-500 text-white rounded hover:bg-red-600">
+                      <button className="px-3 py-1.5 bg-red-500 text-white rounded hover:bg-red-600 whitespace-nowrap writing-normal">
                         삭제
                       </button>
                     </div>
@@ -265,10 +266,10 @@ const AdminPosts = () => {
               </div>
 
               <div className="flex justify-end space-x-2 mt-4">
-                <button className="px-3 py-1.5 bg-blue-500 text-white rounded hover:bg-blue-600">
+                <button className="px-3 py-1.5 bg-blue-500 text-white rounded hover:bg-blue-600 whitespace-nowrap writing-normal">
                   수정
                 </button>
-                <button className="px-3 py-1.5 bg-red-500 text-white rounded hover:bg-red-600">
+                <button className="px-3 py-1.5 bg-red-500 text-white rounded hover:bg-red-600 whitespace-nowrap writing-normal">
                   삭제
                 </button>
               </div>
@@ -281,17 +282,17 @@ const AdminPosts = () => {
         <button
           className="px-3 py-1 rounded border disabled:opacity-50"
           onClick={() => setCurrentPage((p) => p - 1)}
-          disabled={currentPage === 1}
+          disabled={currentPage === 1 || totalPages === 0}
         >
           이전
         </button>
         <span className="px-3 py-1">
-          {currentPage} / {totalPages}
+          {totalPages > 0 ? `${currentPage} / ${totalPages}` : "0 / 0"}
         </span>
         <button
           className="px-3 py-1 rounded border disabled:opacity-50"
           onClick={() => setCurrentPage((p) => p + 1)}
-          disabled={currentPage === totalPages}
+          disabled={currentPage >= totalPages || totalPages === 0}
         >
           다음
         </button>
