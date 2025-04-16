@@ -39,13 +39,100 @@ const AdminCreatePosts = () => {
       </div>
     );
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const editorContent = editorRef.current.getContent();
+    setShowUploadModal(true);
+
+    try {
+      const uploadedFiles = await Promise.all(
+        formData.files.map(async (file) => {
+          setCurrentUpload(file.name);
+          const fileFormData = new FormData();
+          const encodedFileName = encodeURIComponent(file.name);
+          fileFormData.append("file", file);
+          fileFormData.append("originalName", encodedFileName);
+
+          const response = await axios.post(
+            "http://localhost:3000/api/upload/file",
+            fileFormData,
+            {
+              withCredentials: true,
+              headers: {
+                "Content-Type": "multipart/form-data",
+              },
+              onUploadProgress: (ProgressEvent) => {
+                const percentCompleted = Math.round((ProgressEvent.loaded * 100) / ProgressEvent.total);
+                setUploadProgress((prev) => ({
+                  ...prev, 
+                  [file.name]: percentCompleted,
+                }));
+              }
+            }
+          );
+          return response.data.fileUrl;
+        })
+      );
+
+      const postData = {
+        title: formData.title,
+        content: editorContent,
+        fileUrl: uploadedFiles
+      };
+      await axios.post("http://localhost:3000/api/post", postData, {
+        withCredentials: true,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      setShowUploadModal(false);
+      navigate("/admin/posts");
+    } catch (error) {
+      console.log("게시글 업로드 중 에러 발생", error);
+      setShowUploadModal(false);
+    }
+  };
+
+  const handleFileChange = (e) => {
+    const newFiles = Array.from(e.target.files);
+
+    const newFileList = newFiles.map(file => ({
+      id: Data.now() + Math.random(),
+      name: file.name,
+      size: file.size,
+      file: file
+    }));
+
+    setFormData(prev => ({
+      ...prev,
+      files: [...prev.files, ...newFiles],
+      fileList: [...prev.fileList, ...newFileList],
+    }));
+  };
+
+  const handleFileDelete = (fileId) => {
+    setFormData(prev => ({
+      ...prev,
+      file: prev.files.filter((_, index) => prev.fileList[index].id !== fileId),
+      fileList: prev.fileList.filter((file) => file.id !== fileId),
+    }));
+  };
+
+  const formatFileSize = (bytes) => {
+    if(bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const size = ["Bytes", "KB", "MB", "GB"];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((byyes / Math.pow(k,i).toFixed(2)) + ' ' + size[i]);
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
       <div className="bg-white rounded-lg shadow-lg p-4 sm:p-8">
         <h2 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-8 text-gray-800">
           게시글 작성
         </h2>
-        <form className="space-y-4 sm:space-y-8">
+        <form className="space-y-4 sm:space-y-8" onSubmit={handleSubmit}>
           <div>
             <label
               htmlFor="title"
@@ -170,6 +257,7 @@ const AdminCreatePosts = () => {
               type="file"
               id="files"
               multiple
+              onChange={handleFileChange}
               className="mt-1 block w-full text-base sm:text-lg text-gray-500 file:mr-2 sm:file:mr-4 file:py-2 sm:file:py-3 file:px-4 sm:file:px-6 file:rounded-lg file:border file:text-base sm:file:text-lg file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer"
             />
 
@@ -236,21 +324,24 @@ const AdminCreatePosts = () => {
               type="submit"
               className="w-full sm:w-auto sm:px-6 py-2 sm:py-3 text-base sm:text-lg font-medium text-white bg-blue-600 border-2 border-transparent rounded-lg shadow-sm hover:bg-blue-700 focus:outline-none transition-all duration-300"
             >
-              저장하기
+              저장
             </button>
-            
+
             <button
               type="submit"
               onClick={() => navigate("/admin/posts")}
               className="w-full sm:w-auto sm:px-6 py-2 sm:py-3 text-base sm:text-lg font-medium text-gray-700 bg-white border-2 border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 focus:outline-none transition-all duration-300"
             >
-              취소하기
+              취소
             </button>
           </div>
         </form>
       </div>
 
-      <UploadModal progress={uploadProgress[currentUpload] || 0} fileName={currentUpload || ""}/>
+      <UploadModal
+        progress={uploadProgress[currentUpload] || 0}
+        fileName={currentUpload || ""}
+      />
     </div>
   );
 };
