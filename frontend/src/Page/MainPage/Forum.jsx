@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import { motion } from 'framer-motion';
 
 const Forum = () => {
   const [posts, setPosts] = useState([]);
@@ -20,16 +21,27 @@ const Forum = () => {
     fetchPosts();
   }, []);
 
+  const containerVariants = {
+    hidden: { opacity: 0, y: 50 },
+    visible: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 50, damping: 20, staggerChildren: 0.2,}},
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
+  };
+
+
   return (
-    <div className="bg-white">
+    <motion.div className="bg-white" initial="hidden" animate="visible" variants={containerVariants}>
       <div className="container mx-auto px-4 py-28 lg:py-0 max-w-6xl">
         <div className="text-center mb-6">
-          <h2 className="text-4xl lg:text-5xl font-bold text-gray-900">
+          <motion.h2 className="text-4xl lg:text-5xl font-bold text-gray-900" variants={itemVariants}>
             업무 게시판
-          </h2>
+          </motion.h2>
         </div>
 
-        <div className="flex justify-end mb-4">
+        <motion.div className="flex justify-end mb-4" variants={itemVariants}>
           <Link
             to="/board"
             className="px-5 py-2 bg-white text-gray-900 rounded-lg hover:bg-gray-100 transition-colors duration-300 flex items-center gap-2 border border-gray-200"
@@ -52,15 +64,15 @@ const Forum = () => {
               />
             </svg>
           </Link>
-        </div>
+        </motion.div>
 
-        <div className="bf-white rounded-xl shadow-lg overflow-hidden">
+        <motion.div className="bf-white rounded-xl shadow-lg overflow-hidden" variants={containerVariants}>
           {loading ? (
-            <div className="p-6 text-center text-gray-500">로딩 중...</div>
+            <motion.div className="p-6 text-center text-gray-500" initial={{opacity: 0}} animate={{opacity: 1}} transition={{duration: 0.5}}>로딩 중...</motion.div>
           ) : posts.length === 0 ? (
-            <div className="p-6 text-center text-gray-500">
+            <motion.div className="p-6 text-center text-gray-500" initial={{opacity: 0}} animate={{opacity: 1}} transition={{duration: 0.5}}>
               최근 게시글이 없습니다.
-            </div>
+            </motion.div>
           ) : (
             posts.map((post) => (
               <div
@@ -113,9 +125,9 @@ const Forum = () => {
               </div>
             ))
           )}
-        </div>
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
