@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { HiMenu, HiX } from "react-icons/hi";
+import translations from "../../Locale/Navbar.json";
 
 const menuItems = [
   { path: "/", label: "홈" },

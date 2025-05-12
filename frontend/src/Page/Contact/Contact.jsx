@@ -4,11 +4,11 @@ import axios from "axios";
 // 소문자 contact임 주의!
 const contact = () => {
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    message: '',
-    status: 'in progress',
+    name: "",
+    email: "",
+    phone: "",
+    message: "",
+    status: "in progress",
   });
 
   const handleChange = (e) => {
@@ -20,24 +20,27 @@ const contact = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try{
-      const response = await axios.post("http://localhost:3000/api/contact", formData);
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/api/contact",
+        formData
+      );
 
-      if(response.status === 201){
+      if (response.status === 201) {
         alert("문의가 성공적으로 접수되었습니다.");
         setFormData({
-          name: '',
-          email: '',
-          phone: '',
-          message: '',
-          status: 'in progress',
+          name: "",
+          email: "",
+          phone: "",
+          message: "",
+          status: "in progress",
         });
       }
-    } catch(error){
-      console.log('에러 발생', error);
-      alert('문의 접수 중 오류가 발생했습니다. 다시 시도해주세요.');
+    } catch (error) {
+      console.log("에러 발생", error);
+      alert("문의 접수 중 오류가 발생했습니다. 다시 시도해주세요.");
     }
-  }
+  };
 
   return (
     <div className="min-h-screen bg-white py-32">
@@ -53,7 +56,10 @@ const contact = () => {
         </div>
         <div className="grid lg:grid-cols-2 gap-12 items-start">
           <div>
-            <form className="bg-white rounded-2xl shadow-xl p-8" onSubmit={handleSubmit}>
+            <form
+              className="bg-white rounded-2xl shadow-xl p-8"
+              onSubmit={handleSubmit}
+            >
               <div className="space-y-6">
                 <div>
                   <label className="block text-gray-700 font-medium mb-2">
